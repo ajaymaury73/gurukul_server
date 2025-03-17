@@ -13,6 +13,10 @@ public class User {
 	private String username;
 	private String firstName;
 	private String lastName;
+    private String ClassName;
+    private String section;
+	private String rollNumber;
+	private String employeeId;
 	private String gender;
 	private List<Role>roles;
 	private String email;
@@ -24,9 +28,17 @@ public class User {
 	private Date dob;
 	private Date joiningDate;
 	private String Department;
+	private String collegeTenantId;
+    
 
 	
 	
+	public String getCollegeTenantId() {
+		return collegeTenantId;
+	}
+	public void setCollegeTenantId(String collegeTenantId) {
+		this.collegeTenantId = collegeTenantId;
+	}
 	public String getGender() {
 		return gender;
 	}
@@ -117,6 +129,31 @@ public class User {
 	}
 	public void setDepartment(String department) {
 		Department = department;
+	}
+	
+	public String getClassName() {
+		return ClassName;
+	}
+	public void setClassName(String className) {
+		ClassName = className;
+	}
+	public String getSection() {
+		return section;
+	}
+	public void setSection(String section) {
+		this.section = section;
+	}
+	public String getRollNumber() {
+		return rollNumber;
+	}
+	public void setRollNumber(String rollNumber) {
+		this.rollNumber = rollNumber;
+	}
+	public String getEmployeeId() {
+		return employeeId;
+	}
+	public void setEmployeeId(String employeeId) {
+		this.employeeId = employeeId;
 	}
 	
 	

@@ -121,14 +121,7 @@ public class AdminServiceImpl implements AdminService {
 			college.setHostelAvailable(updatedCollege.getHostelAvailable());
 			college.setTotalStudents(updatedCollege.getTotalStudents());
 			college.setDepartments(updatedCollege.getDepartments());
-			college.setSocialMediaLinks(updatedCollege.getSocialMediaLinks());
-			college.setLibraryInfo(updatedCollege.getLibraryInfo());
-			college.setEventCalendar(updatedCollege.getEventCalendar());
-			college.setAnnualBudget(updatedCollege.getAnnualBudget());
-			college.setAlumniAssociationActive(updatedCollege.getAlumniAssociationActive());
-			college.setSafetyFeatures(updatedCollege.getSafetyFeatures());
-			college.setRecognizedByGovernment(updatedCollege.getRecognizedByGovernment());
-			college.setScholarshipsOffered(updatedCollege.getScholarshipsOffered());
+		
 
 			collegeRepo.save(college);
 			return "College updated successfully!";

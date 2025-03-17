@@ -57,5 +57,11 @@ public class UserEndPoint {
 		}
 	}
 	
+	@GetMapping("/get-tenantId")
+	public List<String>getTenantName(){
+		return userService.getAllTenant() ;
+
+	}
+	
 
 }

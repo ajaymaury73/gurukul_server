@@ -16,6 +16,8 @@ public interface UserService {
 
 	String deleteUser(String id);
 
+	List<String> getAllTenant();
+
 
 
 }

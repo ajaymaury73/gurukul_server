@@ -36,14 +36,8 @@ public class College {
     private Boolean hostelAvailable;
     private Integer totalStudents;
     private List<String> departments;
-    private Map<String, String> socialMediaLinks;
-    private String libraryInfo;
-    private List<String> eventCalendar;
-    private Double annualBudget;
-    private Boolean alumniAssociationActive;
-    private String safetyFeatures;
-    private Boolean recognizedByGovernment;
-    private List<String> scholarshipsOffered;
+    private List<ClassOrCourse> classOrCourse;
+  
 	public String getId() {
 		return id;
 	}
@@ -182,58 +176,19 @@ public class College {
 	public void setDepartments(List<String> departments) {
 		this.departments = departments;
 	}
-	public Map<String, String> getSocialMediaLinks() {
-		return socialMediaLinks;
+	public List<ClassOrCourse> getClassOrCourse() {
+		return classOrCourse;
 	}
-	public void setSocialMediaLinks(Map<String, String> socialMediaLinks) {
-		this.socialMediaLinks = socialMediaLinks;
+	public void setClassOrCourse(List<ClassOrCourse> classOrCourse) {
+		this.classOrCourse = classOrCourse;
 	}
-	public String getLibraryInfo() {
-		return libraryInfo;
-	}
-	public void setLibraryInfo(String libraryInfo) {
-		this.libraryInfo = libraryInfo;
-	}
-	public List<String> getEventCalendar() {
-		return eventCalendar;
-	}
-	public void setEventCalendar(List<String> eventCalendar) {
-		this.eventCalendar = eventCalendar;
-	}
-	public Double getAnnualBudget() {
-		return annualBudget;
-	}
-	public void setAnnualBudget(Double annualBudget) {
-		this.annualBudget = annualBudget;
-	}
-	public Boolean getAlumniAssociationActive() {
-		return alumniAssociationActive;
-	}
-	public void setAlumniAssociationActive(Boolean alumniAssociationActive) {
-		this.alumniAssociationActive = alumniAssociationActive;
-	}
-	public String getSafetyFeatures() {
-		return safetyFeatures;
-	}
-	public void setSafetyFeatures(String safetyFeatures) {
-		this.safetyFeatures = safetyFeatures;
-	}
-	public Boolean getRecognizedByGovernment() {
-		return recognizedByGovernment;
-	}
-	public void setRecognizedByGovernment(Boolean recognizedByGovernment) {
-		this.recognizedByGovernment = recognizedByGovernment;
-	}
-	public List<String> getScholarshipsOffered() {
-		return scholarshipsOffered;
-	}
-	public void setScholarshipsOffered(List<String> scholarshipsOffered) {
-		this.scholarshipsOffered = scholarshipsOffered;
-	}
+	
+}
+
     
     
 
-}
+
 
 	
 	

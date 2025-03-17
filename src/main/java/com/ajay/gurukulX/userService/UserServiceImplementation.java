@@ -1,13 +1,17 @@
 package com.ajay.gurukulX.userService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import com.ajay.gurukulX.adminDomain.College;
 import com.ajay.gurukulX.adminException.AdminException;
+import com.ajay.gurukulX.adminRepository.CollegeRepository;
 import com.ajay.gurukulX.userDomin.User;
 import com.ajay.gurukulX.userException.UserException;
 import com.ajay.gurukulX.userRepositry.UserRepositry;
@@ -21,7 +25,8 @@ public class UserServiceImplementation implements UserService{
 	@Autowired
 	private UserRepositry userRepository;
 	
-
+	@Autowired
+	private CollegeRepository collegeRepo;
 
 
 
@@ -111,6 +116,24 @@ public class UserServiceImplementation implements UserService{
 			throw new UserException("User not found with ID: " + id);
 		}
 	}
+
+
+
+
+
+	@Override
+	public List<String> getAllTenant() {
+	    List<College> colleges = collegeRepo.findAll();
+	    List<String> tenantIds = new ArrayList<>();
+	    
+	    for (College college : colleges) {
+	        tenantIds.add(college.getCollegeTenantId());
+	    }
+	    
+	    return tenantIds;
+	}
+
+
 
 
 
