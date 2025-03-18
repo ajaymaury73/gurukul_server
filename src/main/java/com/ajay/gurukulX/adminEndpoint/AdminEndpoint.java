@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,7 +52,7 @@ public class AdminEndpoint {
 			return ResponseEntity.status(500).body("Error: " + e.getMessage());
 		}
 	}
-
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/get-college")
 	public List<College> getCollege() {
 		return adminService.getAllCollege();

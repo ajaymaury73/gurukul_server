@@ -13,7 +13,7 @@ public class User {
 	private String username;
 	private String firstName;
 	private String lastName;
-    private String ClassName;
+    private String className;
     private String section;
 	private String rollNumber;
 	private String employeeId;
@@ -131,12 +131,7 @@ public class User {
 		Department = department;
 	}
 	
-	public String getClassName() {
-		return ClassName;
-	}
-	public void setClassName(String className) {
-		ClassName = className;
-	}
+	
 	public String getSection() {
 		return section;
 	}
@@ -154,6 +149,12 @@ public class User {
 	}
 	public void setEmployeeId(String employeeId) {
 		this.employeeId = employeeId;
+	}
+	public String getClassName() {
+		return className;
+	}
+	public void setClassName(String className) {
+		this.className = className;
 	}
 	
 	

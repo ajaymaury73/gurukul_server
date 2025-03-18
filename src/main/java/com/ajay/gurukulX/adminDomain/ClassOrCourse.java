@@ -1,7 +1,5 @@
 package com.ajay.gurukulX.adminDomain;
 
-import org.springframework.data.annotation.Id;
-
 public class ClassOrCourse {
 	private String name;
 	private CourseType courseType;
