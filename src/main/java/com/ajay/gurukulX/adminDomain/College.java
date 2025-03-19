@@ -6,6 +6,8 @@ import java.util.Map;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.ajay.gurukulX.ExaminationDomain.Degree;
+
 /**
  * 
  */
@@ -36,7 +38,7 @@ public class College {
     private Boolean hostelAvailable;
     private Integer totalStudents;
     private List<String> departments;
-    private List<ClassOrCourse> classOrCourse;
+    private List<Degree> degree;
   
 	public String getId() {
 		return id;
@@ -176,12 +178,16 @@ public class College {
 	public void setDepartments(List<String> departments) {
 		this.departments = departments;
 	}
-	public List<ClassOrCourse> getClassOrCourse() {
-		return classOrCourse;
+	public List<Degree> getDegree() {
+		return degree;
 	}
-	public void setClassOrCourse(List<ClassOrCourse> classOrCourse) {
-		this.classOrCourse = classOrCourse;
+	public void setDegree(List<Degree> degree) {
+		this.degree = degree;
 	}
+	
+	
+	
+	
 	
 }
 

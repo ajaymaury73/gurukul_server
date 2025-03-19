@@ -6,4 +6,6 @@ import com.ajay.gurukulX.adminDomain.College;
 
 public interface CollegeRepository extends MongoRepository<College,String> {
 
+	  
+
 }

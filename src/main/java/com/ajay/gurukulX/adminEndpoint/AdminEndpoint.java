@@ -2,6 +2,8 @@ package com.ajay.gurukulX.adminEndpoint;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,12 +46,13 @@ public class AdminEndpoint {
 	}
 
 	@PostMapping("/add-college")
-	public ResponseEntity<String> saveColleg(@RequestBody College college) {
+	public Response saveColleg(@RequestBody College college) {
 		try {
 			String message = adminService.saveCollege(college);
-			return ResponseEntity.ok(message);
+	    	return Response.status(Response.Status.CREATED).entity(message).build();
+
 		} catch (Exception e) {
-			return ResponseEntity.status(500).body("Error: " + e.getMessage());
+			return Response.status(500).entity(e.getMessage()).build();
 		}
 	}
 	@PreAuthorize("hasRole('ADMIN')")
@@ -69,12 +72,12 @@ public class AdminEndpoint {
 	}
 	
 	 @PostMapping("/update-college")
-	    public ResponseEntity<String> updateCollege(@RequestParam("id") String id, @RequestBody College college) {
+	    public Response updateCollege(@RequestParam("id") String id, @RequestBody College college) {
 	        try {
 	            String message = adminService.updateCollege(id, college);
-	            return ResponseEntity.ok(message);
+		    	return Response.status(Response.Status.CREATED).entity(message).build();
 	        } catch (Exception e) {
-	            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+				return Response.status(500).entity(e.getMessage()).build();
 	        }
 	    }
 	 

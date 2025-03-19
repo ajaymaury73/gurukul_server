@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.ajay.gurukulX.ExaminationDomain.Degree;
 import com.ajay.gurukulX.adminDomain.College;
 import com.ajay.gurukulX.adminDomain.Faculty;
 import com.ajay.gurukulX.adminDomain.RoleNavbar;
@@ -59,11 +60,28 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public String saveCollege(College college) {
 		try {
+			 String tenantName = generateTenantName(college.getCollegeName());
+		     college.setCollegeTenantId(tenantName);
 			collegeRepo.save(college);
 			return "College saved successfully!";
 		} catch (Exception e) {
 			return "Error saving category: " + e.getMessage();
 		}
+	}
+	
+	private String generateTenantName(String collegeName) {
+	    if (collegeName == null || collegeName.trim().isEmpty()) {
+	        throw new IllegalArgumentException("College name cannot be null or empty");
+	    }
+
+	    String[] words = collegeName.split("\\s+");
+	    StringBuilder abbreviation = new StringBuilder("gurkul_");
+
+	    for (String word : words) {
+	        abbreviation.append(word.toLowerCase().charAt(0));
+	    }
+
+	    return abbreviation.toString();
 	}
 
 	@Override
@@ -109,7 +127,7 @@ public class AdminServiceImpl implements AdminService {
 			college.setAccreditation(updatedCollege.getAccreditation());
 			college.setAccreditationStatus(updatedCollege.getAccreditationStatus());
 			college.setEmail(updatedCollege.getEmail());
-			college.setCollegeTenantId(updatedCollege.getCollegeTenantId());
+//			college.setCollegeTenantId(updatedCollege.getCollegeTenantId());
 			college.setUniversityName(updatedCollege.getUniversityName());
 			college.setEstablishedYear(updatedCollege.getEstablishedYear());
 			college.setTotalCourses(updatedCollege.getTotalCourses());
@@ -121,6 +139,9 @@ public class AdminServiceImpl implements AdminService {
 			college.setHostelAvailable(updatedCollege.getHostelAvailable());
 			college.setTotalStudents(updatedCollege.getTotalStudents());
 			college.setDepartments(updatedCollege.getDepartments());
+			
+			List<Degree> degrees=updatedCollege.getDegree();
+			college.setDegree(degrees);
 		
 
 			collegeRepo.save(college);

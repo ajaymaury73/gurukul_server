@@ -2,6 +2,8 @@ package com.ajay.gurukulX.userEndpoint;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,22 +24,22 @@ public class UserEndPoint {
 	private UserService userService;
 
 	@PostMapping("/add-user")
-	public ResponseEntity<String> saveUser(@RequestBody User user) {
+	public Response saveUser(@RequestBody User user) {
 		try {
 			String message = userService.saveUser(user);
-			return ResponseEntity.ok(message);
+	    	return Response.status(Response.Status.CREATED).entity(message).build();
 		} catch (Exception e) {
-			return ResponseEntity.status(500).body("Error: " + e.getMessage());
+			return Response.status(500).entity(e.getMessage()).build();
 		}
 	}
 	
 	@PostMapping("/update-user")
-	public ResponseEntity<String> UpdateUser(@RequestParam("id") String id,@RequestBody User user) {
+	public Response UpdateUser(@RequestParam("id") String id,@RequestBody User user) {
 		try {
 			String message = userService.UpdateUser(id,user);
-			return ResponseEntity.ok(message);
+	    	return Response.status(Response.Status.CREATED).entity(message).build();
 		} catch (Exception e) {
-			return ResponseEntity.status(500).body("Error: " + e.getMessage());
+			return Response.status(500).entity(e.getMessage()).build();
 		}
 	}
 	

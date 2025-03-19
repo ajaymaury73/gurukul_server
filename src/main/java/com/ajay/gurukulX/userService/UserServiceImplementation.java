@@ -1,7 +1,7 @@
 package com.ajay.gurukulX.userService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import com.ajay.gurukulX.adminDomain.ClassOrCourse;
+import com.ajay.gurukulX.ExaminationDomain.Degree;
 import com.ajay.gurukulX.adminDomain.College;
 import com.ajay.gurukulX.adminException.AdminException;
 import com.ajay.gurukulX.adminRepository.CollegeRepository;
@@ -203,27 +203,32 @@ public class UserServiceImplementation implements UserService {
 	}
 
 	@Override
-	public List<String> getCoursesByType(List<String> courseTypes) {
-		try {
-			List<College> colleges = collegeRepo.findAll();
+	public List<String> getCoursesByType(List<String> degreeTypes) {
+	    if (degreeTypes == null || degreeTypes.isEmpty()) {
+	        throw new AdminException("Degree types list cannot be null or empty.");
+	    }
 
-			if (colleges.isEmpty()) {
-				throw new AdminException("No colleges found in the database.");
-			}
+	    try {
+	        List<College> colleges = collegeRepo.findAll();
 
-			List<String> courses = colleges.stream().flatMap(college -> college.getClassOrCourse().stream())
-					.filter(course -> courseTypes.contains(course.getCourseType().name())).map(ClassOrCourse::getName)
-					.distinct().collect(Collectors.toList());
+	        if (colleges == null || colleges.isEmpty()) {
+	            throw new AdminException("No colleges found in the database.");
+	        }
 
-			if (courses.isEmpty()) {
-				throw new AdminException("No courses found for the given course types.");
-			}
+	        List<String> degreeNames = colleges.stream()
+	            .flatMap(college -> college.getDegree().stream())
+	            .filter(degree -> degree.getDegreeType() != null && degreeTypes.contains(degree.getDegreeType()))
+	            .map(Degree::getDegreeName)
+	            .distinct()
+	            .collect(Collectors.toList());
 
-			return courses;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new AdminException("Error while fetching courses: " + e.getMessage(), e);
-		}
+	        // Instead of throwing an exception, return an empty list
+	        return degreeNames.isEmpty() ? Collections.emptyList() : degreeNames;
+	    } catch (Exception e) {
+	        throw new AdminException("Error while fetching degree names: " + e.getMessage(), e);
+	    }
 	}
+
+
 
 }
