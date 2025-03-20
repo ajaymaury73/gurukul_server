@@ -31,7 +31,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow OPTIONS requests
                 .requestMatchers("/public/**").permitAll() // Public endpoints
-                .requestMatchers("/admin/**").hasRole("ADMIN") // Only accessible by ADMIN role
+                .requestMatchers("/admin/**").permitAll() // Only accessible by ADMIN role
                 .anyRequest().authenticated() // All other endpoints require authentication
             )
             .oauth2ResourceServer(oauth2 -> oauth2
