@@ -138,10 +138,7 @@ public class AdminServiceImpl implements AdminService {
 			college.setCampusSize(updatedCollege.getCampusSize());
 			college.setHostelAvailable(updatedCollege.getHostelAvailable());
 			college.setTotalStudents(updatedCollege.getTotalStudents());
-			college.setDepartments(updatedCollege.getDepartments());
 			
-			List<Degree> degrees=updatedCollege.getDegree();
-			college.setDegree(degrees);
 		
 
 			collegeRepo.save(college);

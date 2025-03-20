@@ -2,11 +2,18 @@ package com.ajay.gurukulX.ExaminationDomain;
 
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+
+/**
+ * 
+ */
 public class Degree {
+	@Id
 	private String id;
 	private String degreeName;
 	private String degreeType;
-	private List<Terms> Terms;
+	private List<Department>departments;
+	private String collegeTenantId;
 
 	public String getId() {
 		return id;
@@ -32,13 +39,25 @@ public class Degree {
 		this.degreeType = degreeType;
 	}
 
-	public List<Terms> getTerms() {
-		return Terms;
+	public List<Department> getDepartments() {
+		return departments;
 	}
 
-	public void setTerms(List<Terms> terms) {
-		Terms = terms;
+	public void setDepartments(List<Department> departments) {
+		this.departments = departments;
 	}
+
+	public String getCollegeTenantId() {
+		return collegeTenantId;
+	}
+
+	public void setCollegeTenantId(String collegeTenantId) {
+		this.collegeTenantId = collegeTenantId;
+	}
+   
+	
+	
+	
 
 	
 

@@ -173,7 +173,7 @@ public class UserServiceImplementation implements UserService {
 	    try {
 	        Optional<User> user = userRepository.findById(id);
 	        if (user.isPresent()) {
-	            // Delete user from Keycloak
+	        	
 	            UsersResource usersResource = getUsersResource();
 	            usersResource.get(id).remove();
 

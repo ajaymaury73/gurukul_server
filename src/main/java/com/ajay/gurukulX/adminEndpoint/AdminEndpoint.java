@@ -55,7 +55,6 @@ public class AdminEndpoint {
 			return Response.status(500).entity(e.getMessage()).build();
 		}
 	}
-	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/get-college")
 	public List<College> getCollege() {
 		return adminService.getAllCollege();

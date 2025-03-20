@@ -37,7 +37,6 @@ public class College {
     private Double campusSize;
     private Boolean hostelAvailable;
     private Integer totalStudents;
-    private List<String> departments;
     private List<Degree> degree;
   
 	public String getId() {
@@ -172,17 +171,12 @@ public class College {
 	public void setTotalStudents(Integer totalStudents) {
 		this.totalStudents = totalStudents;
 	}
-	public List<String> getDepartments() {
-		return departments;
-	}
-	public void setDepartments(List<String> departments) {
-		this.departments = departments;
+
+	public void setDegree(List<Degree> degree) {
+		this.degree = degree;
 	}
 	public List<Degree> getDegree() {
 		return degree;
-	}
-	public void setDegree(List<Degree> degree) {
-		this.degree = degree;
 	}
 	
 	
