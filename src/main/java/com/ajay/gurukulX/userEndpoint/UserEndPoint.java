@@ -66,9 +66,13 @@ public class UserEndPoint {
 	}
 	
 	@GetMapping("get-courses")
-	public List<String> getCoursesBasedOnCourseType(@RequestParam List<String> courseType) {
-	    return userService.getCoursesByType(courseType);
+	public List<String> getCoursesBasedOnCourseType(
+	        @RequestParam String collegeTenantId,
+	        @RequestParam String courseType) {  // Change from List<String> to String
+	    return userService.getCoursesByType(courseType, collegeTenantId);
 	}
+
+
 
 	
 

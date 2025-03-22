@@ -1,24 +1,19 @@
-package com.ajay.gurukulX.ExaminationDomain;
+package com.ajay.gurukulX.adminDomain;
 
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.ajay.gurukulX.adminService.DegreeDto;
-
-@Document(collection = "gurukul_academic_calendar")
-public class AcademicCalendar {
+public class CourseEnrollement {
 	@Id
 	private String id;
 	private String academicYear;
 	private String degreeName;
-	private String degreeType;
 	private String deptId;
 	private String departmentName;
-	private String collegeTenantId;
-	
-	private List<Terms>terms;
+	private String termNumber;
+	private String termName;
+	private List<Course> courses;
 	public String getId() {
 		return id;
 	}
@@ -49,31 +44,25 @@ public class AcademicCalendar {
 	public void setDepartmentName(String departmentName) {
 		this.departmentName = departmentName;
 	}
-	public List<Terms> getTerms() {
-		return terms;
+	public String getTermNumber() {
+		return termNumber;
 	}
-	public void setTerms(List<Terms> terms) {
-		this.terms = terms;
+	public void setTermNumber(String termNumber) {
+		this.termNumber = termNumber;
 	}
-	public String getDegreeType() {
-		return degreeType;
+	public String getTermName() {
+		return termName;
 	}
-	public void setDegreeType(String degreeType) {
-		this.degreeType = degreeType;
+	public void setTermName(String termName) {
+		this.termName = termName;
 	}
-	public String getCollegeTenantId() {
-		return collegeTenantId;
+	public List<Course> getCourses() {
+		return courses;
 	}
-	public void setCollegeTenantId(String collegeTenantId) {
-		this.collegeTenantId = collegeTenantId;
+	public void setCourses(List<Course> courses) {
+		this.courses = courses;
 	}
 	
 	
 	
-	
-
-	
-
-	
-
 }

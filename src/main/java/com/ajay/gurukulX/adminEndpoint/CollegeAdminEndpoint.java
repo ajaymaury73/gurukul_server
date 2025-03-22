@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Term;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ajay.gurukulX.ExaminationDomain.AcademicCalendar;
 import com.ajay.gurukulX.ExaminationDomain.Degree;
+import com.ajay.gurukulX.ExaminationDomain.Department;
+import com.ajay.gurukulX.ExaminationDomain.Terms;
 import com.ajay.gurukulX.adminException.AdminException;
 import com.ajay.gurukulX.adminService.AdminService;
 import com.ajay.gurukulX.adminService.CollegeAdminService;
@@ -91,21 +94,25 @@ public class CollegeAdminEndpoint {
 	}
 	
 	
-	 @GetMapping("/template")
-	    public ResponseEntity<byte[]> downloadTemplate(@RequestParam String academicYear,
-	                                                   @RequestParam String degreeName,
-	                                                   @RequestParam String semester) {
-	        try {
-	            ByteArrayOutputStream templateStream = collegeAdminService.generateTemplate(academicYear, degreeName, semester);
-	            HttpHeaders headers = new HttpHeaders();
-	            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-	            headers.setContentDispositionFormData("attachment", "Course_Template.xlsx");
-	            return new ResponseEntity<>(templateStream.toByteArray(), headers, HttpStatus.OK);
-	        } catch (Exception e) {
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                    .body(null);
-	        }
+	@GetMapping("/template")
+	public ResponseEntity<byte[]> downloadTemplate(
+	        @RequestParam String academicYear,
+	        @RequestParam String degreeName,
+	        @RequestParam String semester,
+	        @RequestParam String college,
+	        @RequestParam String degreeType,
+	        @RequestParam String department) {
+	    try {
+	        ByteArrayOutputStream templateStream = collegeAdminService.generateTemplate(academicYear, degreeName, semester, college, degreeType, department);
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+	        headers.setContentDispositionFormData("attachment", "Course_Template.xlsx");
+	        return new ResponseEntity<>(templateStream.toByteArray(), headers, HttpStatus.OK);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 	    }
+	}
+
 	
 	    @GetMapping("/get-all-degree")
 		public List<Degree> getAllDegree() {
@@ -128,6 +135,45 @@ public class CollegeAdminEndpoint {
 			}
 
 		}
+		
+		@GetMapping("get-departments")
+		public List<Department> getDepartmentsBasedOnSelection(
+		        @RequestParam String collegeTenantId,
+		        @RequestParam String courseType,
+		        @RequestParam String degreeName) {
+		    return collegeAdminService.getDepartments(collegeTenantId, courseType, degreeName);
+		}
+
+		@GetMapping("get-academicYear")
+		public List<String>	getAcademicYearBasedOnCollege(@RequestParam String collegeTenantId){
+			return collegeAdminService.getAcademicYearBasedOnCollege(collegeTenantId);
+		}
+	  
+		@GetMapping("get-degreeType")
+		public List<String>	getDegreeType(@RequestParam String collegeTenantId,@RequestParam String academicYear){
+			return collegeAdminService.getDegreeType(collegeTenantId,academicYear);
+		}
+		
+		@GetMapping("get-degrees")
+		public List<String>getDegrees(@RequestParam String collegeTenantId,@RequestParam String academicYear,String degreeType){
+			return collegeAdminService.getDegrees(collegeTenantId,academicYear,degreeType);
+
+		}
+		
+		@GetMapping("get-departementIds")
+		public List<String>getDepartmentIds(@RequestParam String collegeTenantId,@RequestParam String academicYear,String degreeType,String degreeName){
+			return collegeAdminService.getDepartments(collegeTenantId,academicYear,degreeType,degreeName);
+
+		}
+		
+		@GetMapping("get-terms")
+		public List<Terms>getTerms(@RequestParam String collegeTenantId,@RequestParam String academicYear,String degreeType,String degreeName,String deptId){
+			return collegeAdminService.getTerms(collegeTenantId,academicYear,degreeType,degreeName,deptId);
+
+		}
+		
+
+	   
 
 
 	

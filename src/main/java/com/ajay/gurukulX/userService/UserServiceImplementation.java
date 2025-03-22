@@ -202,32 +202,20 @@ public class UserServiceImplementation implements UserService {
 		return tenantIds;
 	}
 
-	@Override
-	public List<String> getCoursesByType(List<String> degreeTypes) {
-	    if (degreeTypes == null || degreeTypes.isEmpty()) {
-	        throw new AdminException("Degree types list cannot be null or empty.");
+	
+	public List<String> getCoursesByType(String courseType, String collegeTenantId) {
+	    Optional<College> college = collegeRepo.findByCollegeTenantId(collegeTenantId);
+
+	    if (college.isPresent()) {
+	        return college.get().getDegree().stream()
+	                .filter(degree -> degree.getDegreeType().equals(courseType)) // Compare single string
+	                .map(Degree::getDegreeName)
+	                .collect(Collectors.toList());
 	    }
 
-	    try {
-	        List<College> colleges = collegeRepo.findAll();
-
-	        if (colleges == null || colleges.isEmpty()) {
-	            throw new AdminException("No colleges found in the database.");
-	        }
-
-	        List<String> degreeNames = colleges.stream()
-	            .flatMap(college -> college.getDegree().stream())
-	            .filter(degree -> degree.getDegreeType() != null && degreeTypes.contains(degree.getDegreeType()))
-	            .map(Degree::getDegreeName)
-	            .distinct()
-	            .collect(Collectors.toList());
-
-	        // Instead of throwing an exception, return an empty list
-	        return degreeNames.isEmpty() ? Collections.emptyList() : degreeNames;
-	    } catch (Exception e) {
-	        throw new AdminException("Error while fetching degree names: " + e.getMessage(), e);
-	    }
+	    return Collections.emptyList();
 	}
+
 
 
 

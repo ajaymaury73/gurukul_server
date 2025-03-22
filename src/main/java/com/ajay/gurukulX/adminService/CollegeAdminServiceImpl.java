@@ -9,16 +9,24 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Term;
 import org.springframework.stereotype.Service;
 
 import com.ajay.gurukulX.ExaminationDomain.AcademicCalendar;
 import com.ajay.gurukulX.ExaminationDomain.Degree;
+import com.ajay.gurukulX.ExaminationDomain.Department;
+import com.ajay.gurukulX.ExaminationDomain.Terms;
 import com.ajay.gurukulX.adminDomain.College;
 import com.ajay.gurukulX.adminException.AdminException;
 import com.ajay.gurukulX.adminRepository.AcademicRepository;
@@ -46,20 +54,26 @@ public class CollegeAdminServiceImpl implements CollegeAdminService{
 
 	@Override
 	public String createAcademicCalender(AcademicCalendar academicCalendar) {
+	    // Check if an academic calendar already exists with the same AY, Degree, and Department
+	    Optional<AcademicCalendar> existingCalendar = academicCalendarRepo.findByAcademicYearAndDegreeNameAndDegreeTypeAndDeptId(
+	        academicCalendar.getAcademicYear(), 
+	        academicCalendar.getDegreeName(), 
+	        academicCalendar.getDegreeType(), 
+	        academicCalendar.getDeptId()
+	    );
+
+	    if (existingCalendar.isPresent()) {
+	        throw new AdminException("Academic Year is already created for the selected Degree and Department.");
+	    }
+
 	    try {
-	        Optional<AcademicCalendar> existingCalendar = academicCalendarRepo.findByAcademicYearAndDegree_DegreeName(
-	                academicCalendar.getAcademicYear(), academicCalendar.getDegree().getDegreeName());
-
-	        if (existingCalendar.isPresent()) {
-	            return "Academic calendar is already present for this Degree Name and Academic Year. Please update the term number if needed.";
-	        }
-
 	        academicCalendarRepo.save(academicCalendar);
 	        return "Academic calendar saved successfully!";
 	    } catch (Exception e) {
-	        return "Error saving academic calendar: " + e.getMessage();
+	        throw new AdminException("Error saving academic calendar: " + e.getMessage());
 	    }
 	}
+
 
 	@Override
 	public List<AcademicCalendar> getAllAcademicCalendar() {
@@ -83,9 +97,13 @@ public class CollegeAdminServiceImpl implements CollegeAdminService{
 	            if (existingCalendarOpt.isPresent()) {
 	                AcademicCalendar existingCalendar = existingCalendarOpt.get();
 
-	                // Update all fields
 	                existingCalendar.setAcademicYear(updatedCalendar.getAcademicYear());
-	                existingCalendar.setDegree(updatedCalendar.getDegree());
+	                existingCalendar.setCollegeTenantId(updatedCalendar.getCollegeTenantId());
+	                existingCalendar.setDegreeName(updatedCalendar.getDegreeName());
+	                existingCalendar.setDegreeType(updatedCalendar.getDegreeType());
+	                existingCalendar.setDepartmentName(updatedCalendar.getDepartmentName());
+	                existingCalendar.setDeptId(updatedCalendar.getDeptId());
+	                existingCalendar.setTerms(updatedCalendar.getTerms());
 
 	                // Save the updated entity
 	                academicCalendarRepo.save(existingCalendar);
@@ -112,14 +130,12 @@ public class CollegeAdminServiceImpl implements CollegeAdminService{
 	    }
       
        @Override
-       public ByteArrayOutputStream generateTemplate(String academicYear, String degreeName, String semester) {
+       public ByteArrayOutputStream generateTemplate(String academicYear, String degreeName, String semester, String college, String degreeType, String department) {
            try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                XSSFSheet sheet = workbook.createSheet("Course Details");
 
-               // Create Cell Styles
                XSSFCellStyle titleStyle = workbook.createCellStyle();
                titleStyle.setAlignment(HorizontalAlignment.CENTER);
-//               titleStyle.setAlignment(VerticalAlignment.MIDDLE);
                XSSFFont titleFont = workbook.createFont();
                titleFont.setBold(true);
                titleFont.setFontHeightInPoints((short) 14);
@@ -127,7 +143,6 @@ public class CollegeAdminServiceImpl implements CollegeAdminService{
 
                XSSFCellStyle headerStyle = workbook.createCellStyle();
                headerStyle.setAlignment(HorizontalAlignment.CENTER);
-//               headerStyle.setAlignment(VerticalAlignment.MIDDLE);
                headerStyle.setBorderTop(BorderStyle.THIN);
                headerStyle.setBorderBottom(BorderStyle.THIN);
                headerStyle.setBorderLeft(BorderStyle.THIN);
@@ -136,75 +151,57 @@ public class CollegeAdminServiceImpl implements CollegeAdminService{
                headerFont.setBold(true);
                headerStyle.setFont(headerFont);
 
-               XSSFCellStyle normalStyle = workbook.createCellStyle();
-               normalStyle.setBorderTop(BorderStyle.THIN);
-               normalStyle.setBorderBottom(BorderStyle.THIN);
-               normalStyle.setBorderLeft(BorderStyle.THIN);
-               normalStyle.setBorderRight(BorderStyle.THIN);
-
-               // Title Row (Merged Across 3 Columns)
+               // Title
                XSSFRow titleRow = sheet.createRow(0);
                XSSFCell titleCell = titleRow.createCell(0);
                titleCell.setCellValue("Upload Course Template");
                titleCell.setCellStyle(titleStyle);
-               sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));  // Merge 3 columns for title
+               sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 5));
 
-          
+               // Metadata
+               String[][] metadata = {
+                   {"College", college},
+                   {"Academic Year", academicYear},
+                   {"Degree Type", degreeType},
+                   {"Degree Name", degreeName},
+                   {"Department", department},
+                   {"Semester", semester}
+               };
 
-               // Metadata (Academic Year, Degree, Semester)
-               XSSFRow metaRow1 = sheet.createRow(2);
-               XSSFCell cell1 = metaRow1.createCell(0);
-               cell1.setCellValue("Academic Year:");
-               cell1.setCellStyle(headerStyle);
+               int rowIdx = 2;
+               for (String[] entry : metadata) {
+                   XSSFRow metaRow = sheet.createRow(rowIdx++);
+                   XSSFCell cell1 = metaRow.createCell(0);
+                   cell1.setCellValue(entry[0] + ":");
+                   cell1.setCellStyle(headerStyle);
 
-               XSSFCell cell2 = metaRow1.createCell(1);
-               cell2.setCellValue(academicYear);
-               cell2.setCellStyle(headerStyle);
+                   XSSFCell cell2 = metaRow.createCell(1);
+                   cell2.setCellValue(entry[1]);
+                   cell2.setCellStyle(headerStyle);
+               }
 
-               XSSFRow metaRow2 = sheet.createRow(3);
-               XSSFCell cell3 = metaRow2.createCell(0);
-               cell3.setCellValue("Degree:");
-               cell3.setCellStyle(headerStyle);
+               // Table Headers
+               XSSFRow headerRow = sheet.createRow(rowIdx + 1);
+               String[] headers = {"Course Code", "Course Name", "Course Type"};
 
-               XSSFCell cell4 = metaRow2.createCell(1);
-               cell4.setCellValue(degreeName);
-               cell4.setCellStyle(headerStyle);
-
-               XSSFRow metaRow3 = sheet.createRow(4);
-               XSSFCell cell5 = metaRow3.createCell(0);
-               cell5.setCellValue("Semester:");
-               cell5.setCellStyle(headerStyle);
-
-               XSSFCell cell6 = metaRow3.createCell(1);
-               cell6.setCellValue(semester);
-               cell6.setCellStyle(headerStyle);
-               
-
-
-               // Course Details Header
-               XSSFRow headerRow = sheet.createRow(6);
-               XSSFCell headerRowcell1 = headerRow.createCell(0);
-               XSSFCell headerRowcell2 = headerRow.createCell(1);
-               XSSFCell headerRowcell3 = headerRow.createCell(2);
-               headerRowcell1.setCellValue("Course Code");
-               headerRowcell2.setCellValue("Course Name ");
-               headerRowcell3.setCellValue("Course Type");
-               headerRowcell1.setCellStyle(headerStyle);
-               headerRowcell2.setCellStyle(headerStyle);
-               headerRowcell3.setCellStyle(headerStyle);
+               for (int i = 0; i < headers.length; i++) {
+                   XSSFCell headerCell = headerRow.createCell(i);
+                   headerCell.setCellValue(headers[i]);
+                   headerCell.setCellStyle(headerStyle);
+               }
 
                // Auto-size columns
-               for (int i = 0; i <= 5; i++) {
+               for (int i = 0; i < headers.length; i++) {
                    sheet.autoSizeColumn(i);
                }
 
-               // Write workbook to output stream
                workbook.write(outputStream);
                return outputStream;
            } catch (IOException e) {
-               throw new RuntimeException("Error generating template", e);
+               throw new RuntimeException("Error creating Excel file", e);
            }
        }
+
 
       
 
@@ -313,9 +310,166 @@ public class CollegeAdminServiceImpl implements CollegeAdminService{
 	    }
 	}
 
+	public List<Department> getDepartments(String collegeTenantId, String courseType, String degreeName) {
+	    Optional<College> college = collegeRepo.findByCollegeTenantId(collegeTenantId);
+	    
+	    if (college.isPresent()) {
+	        return college.get().getDegree().stream()
+	                .filter(degree -> courseType.equals(degree.getDegreeType()) && degreeName.equals(degree.getDegreeName()))
+	                .flatMap(degree -> degree.getDepartments().stream())
+	                .collect(Collectors.toList());
+	    }
+	    
+	    return Collections.emptyList();
+	}
+
+
+	@Override
+	public List<String> getAcademicYearBasedOnCollege(String collegeTenantId) {
+	    Set<String> academicYears = new HashSet<>();
+
+	    try {
+	        List<AcademicCalendar> academicCalendars = academicCalendarRepo.findByCollegeTenantId(collegeTenantId);
+
+	        if (academicCalendars.isEmpty()) {
+	            return new ArrayList<>(); 
+	        }
+
+	        for (AcademicCalendar calendar : academicCalendars) {
+	            if (calendar.getAcademicYear() != null) {
+	                academicYears.add(calendar.getAcademicYear());
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        throw new AdminException("Error while fetching academic years for collegeTenantId: " + collegeTenantId, e);
+	    }
+
+	    return new ArrayList<>(academicYears);
+	}
+
+
+
+	@Override
+	public List<String> getDegreeType(String collegeTenantId, String academicYear) {
+	    Set<String> degreeTypeSet = new HashSet<>(); 
+
+	    try {
+	        List<AcademicCalendar> academicCalendars = academicCalendarRepo.findByCollegeTenantIdAndAcademicYear(collegeTenantId, academicYear);
+
+	       if(academicCalendars.isEmpty()) {
+	            return new ArrayList<>(); 
+	       }
+
+	        for (AcademicCalendar calendar : academicCalendars) {
+	            if (calendar.getDegreeType() != null) {
+	                degreeTypeSet.add(calendar.getDegreeType());
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        throw new AdminException("Error fetching degree types: " + e.getMessage(), e);
+	    }
+
+	    return new ArrayList<>(degreeTypeSet); 
+	}
+
+
+	@Override
+	public List<String> getDegrees(String collegeTenantId, String academicYear, String degreeType) {
+	    Set<String> degrees = new HashSet<>(); 
+
+	    try {
+	        List<AcademicCalendar> academicCalendars = academicCalendarRepo.findByCollegeTenantIdAndAcademicYearAndDegreeType(collegeTenantId,academicYear,degreeType);
+
+	        if (academicCalendars.isEmpty()) {
+	            return new ArrayList<>(); 
+	        }
+	        
+	        for (AcademicCalendar calendar : academicCalendars) {
+	            if (calendar.getDegreeName() != null) {
+	            	degrees.add(calendar.getDegreeName());
+	            }
+	        }
+		} catch (Exception e) {
+	        throw new AdminException("Error fetching degrees: " + e.getMessage(), e);
+		}
+	    return new ArrayList<>(degrees); 
+
+	}
+
+
+	@Override
+	public List<String> getDepartments(String collegeTenantId, String academicYear, String degreeType,
+			String degreeName) {
+		 Set<String> deptIds = new HashSet<>();
+		try {
+			
+	        List<AcademicCalendar> academicCalendars = academicCalendarRepo.findByCollegeTenantIdAndAcademicYearAndDegreeType(collegeTenantId,academicYear,degreeType);
+
+			 if (academicCalendars.isEmpty()) {
+		            return new ArrayList<>(); 
+
+		        }
+		        
+		        for (AcademicCalendar calendar : academicCalendars) {
+		            if (calendar.getDegreeName() != null) {
+		            	deptIds.add(calendar.getDeptId());
+		            }
+		        }
+		} catch (Exception e) {
+	        throw new AdminException("Error fetching degrees: " + e.getMessage(), e);
+		}
+		return new ArrayList<>(deptIds);
+	}
+
+
+	@Override
+	public List<Terms> getTerms(String collegeTenantId, String academicYear, String degreeType, String degreeName, String deptId) {
+	    List<Terms> terms = new ArrayList<>();
+	    try {
+	        List<AcademicCalendar> academicCalendars = academicCalendarRepo.findByCollegeTenantIdAndAcademicYearAndDegreeTypeAndDeptId(
+	                collegeTenantId, academicYear, degreeType, deptId
+	        );
+
+	        if (academicCalendars.isEmpty()) {
+	            return new ArrayList<>(); 
+	        }
+
+	        for (AcademicCalendar calendar : academicCalendars) {
+	            if (calendar.getTerms() != null) {
+	                terms.addAll(calendar.getTerms());
+	            }
+	        }
+	    } catch (Exception e) {
+	        throw new AdminException("Error fetching degrees: " + e.getMessage(), e);
+
+	    }
+
+	    return terms;
+	}
+
+
+
+	
+
+	  
+
+
+
+
+
+	
 
 
 	
+	}
 	
 	
-}
+
+    
+	
+	
+	
+	
+

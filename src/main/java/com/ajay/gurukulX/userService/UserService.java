@@ -18,7 +18,8 @@ public interface UserService {
 
 	List<String> getAllTenant();
 
-	List<String> getCoursesByType(List<String> courseType);
+
+	List<String> getCoursesByType(String courseType, String collegeTenantId);
 
 
 

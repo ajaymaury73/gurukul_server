@@ -13,7 +13,7 @@ public class Terms {
 	private String termNumber;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	private List<Course>courses;
+	
 
 
 	public String getId() {
@@ -38,13 +38,7 @@ public class Terms {
 		this.endDate = endDate;
 	}
 
-	public List<Course> getCourses() {
-		return courses;
-	}
 
-	public void setCourses(List<Course> courses) {
-		this.courses = courses;
-	}
 
 	public String getTermNumber() {
 		return termNumber;
