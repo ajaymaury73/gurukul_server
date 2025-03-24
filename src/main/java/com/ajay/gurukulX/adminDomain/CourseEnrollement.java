@@ -3,17 +3,20 @@ package com.ajay.gurukulX.adminDomain;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
-
+import org.springframework.data.mongodb.core.mapping.Document;
+@Document(collection = "gurukul_course_enrollement")
 public class CourseEnrollement {
 	@Id
 	private String id;
 	private String academicYear;
+	private String degreeType;
 	private String degreeName;
 	private String deptId;
 	private String departmentName;
 	private String termNumber;
 	private String termName;
 	private List<Course> courses;
+	private String collegeTenantId;
 	public String getId() {
 		return id;
 	}
@@ -61,6 +64,18 @@ public class CourseEnrollement {
 	}
 	public void setCourses(List<Course> courses) {
 		this.courses = courses;
+	}
+	public String getDegreeType() {
+		return degreeType;
+	}
+	public void setDegreeType(String degreeType) {
+		this.degreeType = degreeType;
+	}
+	public String getCollegeTenantId() {
+		return collegeTenantId;
+	}
+	public void setCollegeTenantId(String collegeTenantId) {
+		this.collegeTenantId = collegeTenantId;
 	}
 	
 	

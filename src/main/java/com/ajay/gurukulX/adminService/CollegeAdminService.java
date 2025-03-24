@@ -4,11 +4,13 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.query.Term;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ajay.gurukulX.ExaminationDomain.AcademicCalendar;
 import com.ajay.gurukulX.ExaminationDomain.Degree;
 import com.ajay.gurukulX.ExaminationDomain.Department;
 import com.ajay.gurukulX.ExaminationDomain.Terms;
+import com.ajay.gurukulX.adminDomain.CourseEnrollement;
 
 public interface CollegeAdminService {
 
@@ -40,6 +42,11 @@ public interface CollegeAdminService {
 
 	List<Terms> getTerms(String collegeTenantId, String academicYear, String degreeType, String degreeName,
 			String deptId);
+
+	String uploadCourseTemplate(MultipartFile file);
+
+	List<CourseEnrollement> getAllCourses();
+
 
 
 

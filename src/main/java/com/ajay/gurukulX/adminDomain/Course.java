@@ -4,6 +4,7 @@ public class Course {
 private String courseCode;
 private String courseName;
 private CourseType courseType;
+
 public String getCourseCode() {
 	return courseCode;
 }

@@ -18,6 +18,7 @@ import com.ajay.gurukulX.ExaminationDomain.AcademicCalendar;
 import com.ajay.gurukulX.ExaminationDomain.Degree;
 import com.ajay.gurukulX.ExaminationDomain.Department;
 import com.ajay.gurukulX.ExaminationDomain.Terms;
+import com.ajay.gurukulX.adminDomain.CourseEnrollement;
 import com.ajay.gurukulX.adminException.AdminException;
 import com.ajay.gurukulX.adminService.AdminService;
 import com.ajay.gurukulX.adminService.CollegeAdminService;
@@ -94,24 +95,7 @@ public class CollegeAdminEndpoint {
 	}
 	
 	
-	@GetMapping("/template")
-	public ResponseEntity<byte[]> downloadTemplate(
-	        @RequestParam String academicYear,
-	        @RequestParam String degreeName,
-	        @RequestParam String semester,
-	        @RequestParam String college,
-	        @RequestParam String degreeType,
-	        @RequestParam String department) {
-	    try {
-	        ByteArrayOutputStream templateStream = collegeAdminService.generateTemplate(academicYear, degreeName, semester, college, degreeType, department);
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-	        headers.setContentDispositionFormData("attachment", "Course_Template.xlsx");
-	        return new ResponseEntity<>(templateStream.toByteArray(), headers, HttpStatus.OK);
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-	    }
-	}
+	
 
 	
 	    @GetMapping("/get-all-degree")
@@ -172,11 +156,38 @@ public class CollegeAdminEndpoint {
 
 		}
 		
-
-	   
-
-
-	
+		@GetMapping("/template")
+		public ResponseEntity<byte[]> downloadTemplate(
+		        @RequestParam String academicYear,
+		        @RequestParam String degreeName,
+		        @RequestParam String semester,
+		        @RequestParam String college,
+		        @RequestParam String degreeType,
+		        @RequestParam String department) {
+		    try {
+		        ByteArrayOutputStream templateStream = collegeAdminService.generateTemplate(academicYear, degreeName, semester, college, degreeType, department);
+		        HttpHeaders headers = new HttpHeaders();
+		        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		        headers.setContentDispositionFormData("attachment", "Course_Template.xlsx");
+		        return new ResponseEntity<>(templateStream.toByteArray(), headers, HttpStatus.OK);
+		    } catch (Exception e) {
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		    }
+		}
+		
+		 @PostMapping("/upload-course-template")
+		    public Response uploadCourseTemplate(@RequestParam("file") MultipartFile file) {
+		        String response = collegeAdminService.uploadCourseTemplate(file);
+				return Response.status(Response.Status.CREATED).entity(response).build();
+		    }
+		 
+		 @GetMapping("/get-courses")
+		 public List<CourseEnrollement> getcourses(){
+			return collegeAdminService.getAllCourses();
+			 
+		 }
+		 
+		 
 }
 
 

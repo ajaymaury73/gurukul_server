@@ -2,6 +2,8 @@ package com.ajay.gurukulX.adminService;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.ajay.gurukulX.adminDomain.College;
 import com.ajay.gurukulX.adminDomain.Faculty;
 import com.ajay.gurukulX.adminDomain.RoleNavbar;
@@ -24,6 +26,8 @@ public interface AdminService {
 
 
 	String updateCollege(String id, College college);
+
+
 
 
 
