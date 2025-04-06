@@ -50,12 +50,12 @@ public class UserEndPoint {
 	}
 	
 	@GetMapping("/delete-user")
-	public ResponseEntity<String> deleteUser(@RequestParam("id") String id) {
+	public Response deleteUser(@RequestParam("id") String id) {
 		try {
 			String message = userService.deleteUser(id);
-			return ResponseEntity.ok(message);
+	    	return Response.status(Response.Status.CREATED).entity(message).build();
 		} catch (Exception e) {
-			return ResponseEntity.status(500).body("Error: " + e.getMessage());
+			return Response.status(500).entity(e.getMessage()).build();
 		}
 	}
 	

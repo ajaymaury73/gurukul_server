@@ -150,9 +150,6 @@ public class UserServiceImplementation implements UserService {
 	            userdetailsUser.setFatherName(user.getFatherName());
 	            userdetailsUser.setMotherName(user.getMotherName());
 	            userdetailsUser.setFatherMobileNumber(user.getFatherMobileNumber());
-	            userdetailsUser.setDob(user.getDob());
-	            userdetailsUser.setJoiningDate(user.getJoiningDate());
-	            userdetailsUser.setDepartment(user.getDepartment());
 	            userdetailsUser.setRoles(user.getRoles());
 	            userdetailsUser.setGender(user.getGender());
 
@@ -185,6 +182,7 @@ public class UserServiceImplementation implements UserService {
 	            throw new UserException("User not found with ID: " + id);
 	        }
 	    } catch (Exception e) {
+	    	e.printStackTrace();
 	        throw new UserException("Error while deleting user: " + e.getMessage(), e);
 	    }
 	}
@@ -208,7 +206,7 @@ public class UserServiceImplementation implements UserService {
 
 	    if (college.isPresent()) {
 	        return college.get().getDegree().stream()
-	                .filter(degree -> degree.getDegreeType().equals(courseType)) // Compare single string
+	                .filter(degree -> degree.getDegreeType().equals(courseType)) 
 	                .map(Degree::getDegreeName)
 	                .collect(Collectors.toList());
 	    }

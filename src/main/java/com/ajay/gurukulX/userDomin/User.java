@@ -1,10 +1,15 @@
 package com.ajay.gurukulX.userDomin;
 
+import java.time.LocalDate;
+
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 @Document(collection = "gurukul_users")
 public class User {
@@ -13,25 +18,41 @@ public class User {
 	private String username;
 	private String firstName;
 	private String lastName;
-    private String className;
+	private String email;
+	private String password; 
+	private String userImageType;
     private String section;
 	private String rollNumber;
 	private String employeeId;
+	private String applicationNumber;
 	private String gender;
+	private List<YearDetails>yearDetails;
+	private String bloodGroup;
 	private List<Role>roles;
-	private String email;
-	private String password;
+	private List<UserAddress>userAddressDetails;
+	private List<UserQualification>qualificationDetails;
 	private String mobileNumber;
 	private String fatherName;
-	private String motherName;
 	private String fatherMobileNumber;
-	private Date dob;
-	private Date joiningDate;
-	private String Department;
+	private String motherName;
+	private LocalDate dob;
+	private LocalDate joiningDate;
 	private String collegeTenantId;
     
+	  private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-	
+	    public void setPassword(String password) {
+	        this.password = passwordEncoder.encode(password);
+	    }
+
+	    // Verify password
+	    public boolean verifyPassword(String rawPassword) {
+	        return passwordEncoder.matches(rawPassword, this.password);
+	    }
+
+	    public String getPassword() {
+	        return password;
+	    }
 	
 	public String getCollegeTenantId() {
 		return collegeTenantId;
@@ -63,12 +84,7 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -112,24 +128,8 @@ public class User {
 	public void setFatherMobileNumber(String fatherMobileNumber) {
 		this.fatherMobileNumber = fatherMobileNumber;
 	}
-	public Date getDob() {
-		return dob;
-	}
-	public void setDob(Date dob) {
-		this.dob = dob;
-	}
-	public Date getJoiningDate() {
-		return joiningDate;
-	}
-	public void setJoiningDate(Date joiningDate) {
-		this.joiningDate = joiningDate;
-	}
-	public String getDepartment() {
-		return Department;
-	}
-	public void setDepartment(String department) {
-		Department = department;
-	}
+
+	
 	
 	
 	public String getSection() {
@@ -150,12 +150,64 @@ public class User {
 	public void setEmployeeId(String employeeId) {
 		this.employeeId = employeeId;
 	}
-	public String getClassName() {
-		return className;
+	public String getApplicationNumber() {
+		return applicationNumber;
 	}
-	public void setClassName(String className) {
-		this.className = className;
+	public void setApplicationNumber(String applicationNumber) {
+		this.applicationNumber = applicationNumber;
 	}
+	
+	public List<YearDetails> getYearDetails() {
+		return yearDetails;
+	}
+	public void setYearDetails(List<YearDetails> yearDetails) {
+		this.yearDetails = yearDetails;
+	}
+	public String getBloodGroup() {
+		return bloodGroup;
+	}
+	public void setBloodGroup(String bloodGroup) {
+		this.bloodGroup = bloodGroup;
+	}
+	public LocalDate getDob() {
+		return dob;
+	}
+	public void setDob(LocalDate dob) {
+		this.dob = dob;
+	}
+	public LocalDate getJoiningDate() {
+		return joiningDate;
+	}
+	public void setJoiningDate(LocalDate joiningDate) {
+		this.joiningDate = joiningDate;
+	}
+
+	public String getUserImageType() {
+		return userImageType;
+	}
+
+	public void setUserImageType(String userImageType) {
+		this.userImageType = userImageType;
+	}
+
+	public List<UserAddress> getUserAddressDetails() {
+		return userAddressDetails;
+	}
+
+	public void setUserAddressDetails(List<UserAddress> userAddressDetails) {
+		this.userAddressDetails = userAddressDetails;
+	}
+
+	public List<UserQualification> getQualificationDetails() {
+		return qualificationDetails;
+	}
+
+	public void setQualificationDetails(List<UserQualification> qualificationDetails) {
+		this.qualificationDetails = qualificationDetails;
+	}
+
+	
+	
 	
 	
 	
